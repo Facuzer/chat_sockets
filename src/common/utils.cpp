@@ -28,6 +28,13 @@ string enviar_y_esperar_respuesta(int s, string mensaje) {
     return leer_de_socket(s);
 }
 
+bool includes(vector<string> vector, string element){
+    for(auto e: vector) {
+        if(e == element) return true;
+    }
+    return false;
+}
+
 /* Dado un string y un delimitador como " ", devuelve un vector de strings donde los elementos son los tokens que
    resultan de la separación segun el delimitador. */
 

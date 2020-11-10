@@ -1,7 +1,7 @@
 #include "../common/header.h"
 using namespace std;
 thread thread_pool[MAX_CLIENTS];  
-
+vector<Client> clients;
 
 /* Dado un socket, un nickname y el estado de login, registra un nuevo cliente con el nickname dado si el 
    mismo no se encuentra en uso. 
@@ -34,23 +34,24 @@ thread thread_pool[MAX_CLIENTS];
 /* Funcion que ejecutan los threads */
 void connection_handler(int socket_desc){
     int s = socket_desc;
-    auto client = Client(s);
-    printf("Conexion aceptada");
-
+    auto client = Client(s, &clients);
+    
     /* Main loop */
-    // while(1) {
+    while(1) {
 
-    //     /* leer socket, salir si hubo error*/
-    //     /* COMPLETAR */
+        /* leer socket, salir si hubo error*/
+        auto msg = leer_de_socket(s);
+        cout << "recibo -> " << msg << endl;
+        /* Parsear el buffer recibido*/
+        if(msg.substr(0, 4) == "[MSG"){
+            client.spread(msg);
+        }
 
-    //     /* Parsear el buffer recibido*/
-    //     /* COMPLETAR */
+        /* Detectar el tipo de mensaje (crudo(solo texto) o comando interno(/..),
+           y ejecutar la funcion correspondiente segun el caso */
+        /* COMPLETAR */
 
-    //     /* Detectar el tipo de mensaje (crudo(solo texto) o comando interno(/..),
-    //        y ejecutar la funcion correspondiente segun el caso */
-    //     /* COMPLETAR */
-
-    // }
+    }
 }
 
 
@@ -85,15 +86,12 @@ int connection_setup(){
 
 int main(void)
 {
-    cout << "askjdjkashdkashda";
     struct sockaddr_in client;
 
     // Abrimos un socket para escuchar conexiones entrantes
     int s = connection_setup();
-    printf("trolo de mierda");
     int i = 0;
     while(1) {  
-        printf("asd");
         // Main loop del servidor
         // Aqui se aceptan conexiones y handlea a cada cliente a partir de un thread
         int s1;
@@ -103,7 +101,6 @@ int main(void)
         }
         else{
             thread_pool[i] = thread(connection_handler, s1);
-            cout << "as";
             i++;
         }
     }

@@ -21,17 +21,17 @@
 #include <thread>
 #include <mutex>
 
-#define MENSAJE_MAXIMO  1000
+#define MENSAJE_MAXIMO  100000
 #define MAX_CLIENTS 10
 #define BUF_SIZE 4096
-#define PORT 3000
+#define PORT 3006
 
 
 using namespace std;
 string leer_de_socket(int s);
 void enviar_a_socket(int s, string mensaje);
 string enviar_y_esperar_respuesta(int s, string mensaje);
-
+bool includes(vector<string> vector, string element);
 
 
 vector<string> split(const string& str, const string& delim);
@@ -40,17 +40,17 @@ class Client
     private:
         int s;
         string nickname;
+        vector<Client>* clients;
     public:
-        string askNickname(){
-            string str = enviar_y_esperar_respuesta(s, "[LOGIN]");
-            cout << str;
-            return str;
-        };
-        Client(int _s){
-            s = _s;
-            nickname = askNickname();
-            printf("%s", nickname.c_str());
-            cout << "asdkasjdas";
-        };
+        string getNickname(){
+            return nickname;
+        }
+        string askNickname();
+        void rechazarNickname();
+        void aceptarNickname();
+        bool checkNickname();
+        Client(int _s, vector<Client>* clients);
+        void spread(string msg);
+        void inform(string msg);
 };
 

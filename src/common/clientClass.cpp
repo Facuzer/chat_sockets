@@ -3,13 +3,56 @@
 
 string Client::askNickname() {
     string str = enviar_y_esperar_respuesta(s, "[LOGIN]");
-    cout << str;
     return str;
 }
 
-Client::Client(int _s){
+void Client::rechazarNickname(){
+    enviar_a_socket(s, "[!]");
+}
+
+void Client::aceptarNickname(){
+    enviar_a_socket(s, "[OK]");
+}
+
+Client::Client(int _s, vector<Client>* _clients){
     s = _s;
-    nickname = askNickname();
-    printf("%s", nickname.c_str());
-    cout << "asdkasjdas";
+    clients = _clients;
+    while(1){
+        nickname = askNickname();
+        if(checkNickname()) break;
+        else{
+            rechazarNickname();
+        }
+    }
+    aceptarNickname();
+    clients->push_back((Client)(*this));
+    
+    
+    printf("Conexion aceptada de: %s\n", nickname.c_str());
+}
+
+bool Client::checkNickname(){
+    for (size_t i = 0; i < clients->size(); i++)
+    {
+        Client c = clients->at(i);
+        if(c.getNickname() == nickname){
+            return false;
+        }
+    }
+    return true;
+}
+
+void Client::spread(string msg){
+    for (size_t i = 0; i < clients->size(); i++)
+    {
+        Client c = clients->at(i);
+        if(c.nickname != nickname){
+            // TODO sacar el [MSG]
+            c.inform(msg);
+        }
+    }
+}
+
+void Client::inform(string msg){
+    enviar_a_socket(s, msg);
 }
