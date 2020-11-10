@@ -3,34 +3,6 @@ using namespace std;
 thread thread_pool[MAX_CLIENTS];  
 vector<Client> clients;
 
-/* Dado un socket, un nickname y el estado de login, registra un nuevo cliente con el nickname dado si el 
-   mismo no se encuentra en uso. 
-   En caso contrario, envia un mensaje indicando la falla. Además, actualiza 
-   la variable log con el nuevo estado de login del cliente. */
-// Client addClient(int s, const string& nickname){aq
-
-//     /* COMPLETAR */
-// }
-
-
-/* Dado un cliente, lo elimina del sistema y cierra su socket adecuadamanete(ver shutdown()) */
-// void deleteClient(Client& c){
-
-//    /* COMPLETAR */
-// }
-
-/* Dado un nick, devuelve un puntero al cliente encontrado con dicho nickname. En caso de no existir,
-   el puntero es NULL */
-// Client* getClient(const string& nick) {
-//     /* COMPLETAR */
-// }
-
-/* Dado un cliente y un mensaje, envía dicho mensaje a traves del socket asociado al cliente */
-// void send(Client* c, const string& msg) {
-//     /* COMPLETAR */
-// }
-
-
 /* Funcion que ejecutan los threads */
 void connection_handler(int socket_desc){
     int s = socket_desc;
@@ -41,16 +13,16 @@ void connection_handler(int socket_desc){
 
         /* leer socket, salir si hubo error*/
         auto msg = leer_de_socket(s);
-        cout << "recibo -> " << msg << endl;
-        /* Parsear el buffer recibido*/
-        if(msg.substr(0, 4) == "[MSG"){
-            client.spread(msg);
+        if(true){
+            cout << "recibo -> " << msg << endl;
+            /* Parsear el buffer recibido*/
+
+            /* Detectar el tipo de mensaje (crudo(solo texto) o comando interno(/..),
+            y ejecutar la funcion correspondiente segun el caso */
+            if(msg.substr(0, 5) == "[MSG]"){
+                client.spread(msg);
+            }
         }
-
-        /* Detectar el tipo de mensaje (crudo(solo texto) o comando interno(/..),
-           y ejecutar la funcion correspondiente segun el caso */
-        /* COMPLETAR */
-
     }
 }
 
@@ -83,15 +55,32 @@ int connection_setup(){
     return listening_socket;
 }
 
-
 int main(void)
 {
+    // while(1){
+    //     string a;
+    //     printf("Ingresa str: ");
+    //     getline(cin, a);
+    //     auto v = split(a, " ");
+    //     printf("lista -> [");
+    //     for (size_t i = 0; i < v.size(); i++)
+    //     {
+    //         printf("%s", v[i].c_str());
+    //         if(i != v.size() - 1){
+    //             printf(",");
+    //         }
+    //     }
+    //     printf("]\n");
+        
+    // }
+
+
     struct sockaddr_in client;
 
     // Abrimos un socket para escuchar conexiones entrantes
     int s = connection_setup();
     int i = 0;
-    while(1) {  
+    while(i < MAX_CLIENTS){  
         // Main loop del servidor
         // Aqui se aceptan conexiones y handlea a cada cliente a partir de un thread
         int s1;
@@ -105,18 +94,19 @@ int main(void)
         }
     }
 
-    /* Cerramos las conexiones pendientes. */
-    // for (size_t i = 0; i < thread_pool.size(); i++)
-    // {
-    //     thread_pool[i].join()
-    // }
+    // /* Cerramos las conexiones pendientes. */
+    for (size_t i = 0; i < clients.size(); i++)
+    {
+        Client c = clients.at(i);
+        c.close_conn();
+    }
+    /* Cerramos la conexión que escucha. */
+    printf("Cierro la conexión del server.\n");
+    close(s);
     
     
     
   
-    /* Cerramos la conexión que escucha. */
-    close(s);
 
     return 0;
 }
-

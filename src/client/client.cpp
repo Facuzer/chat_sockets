@@ -52,9 +52,15 @@ string pedir_nick(int s){
 // Funcion principal de un cliente.
 // El siguiente esquema puede servir como guia. Aprovechen las funciones de string!
 void lookForMsgs(int s){
-    auto msg = leer_de_socket(s);
-    if(msg.substr(0, 4) == "[MSG"){
-        cout << msg << endl;
+    while(1){
+        auto rcv = leer_de_socket(s);
+        // printf("recibo -> %s\n", rcv.c_str());
+        if(rcv.substr(0, 5) == "[MSG]"){
+            struct Msg msg;
+            msg = msg.parse(rcv);
+            printf(" [%s] -> %s\n", msg.sender.c_str(), msg.msg.c_str());
+            // printf("%s\n", rcv.c_str());
+        }
     }
 }
 
@@ -66,19 +72,19 @@ int main(){
     // escucho mensajes
     thread msgThread = thread(lookForMsgs, s);
     /* Loop principal que envía mensajes al servidor */
-    while(1) {
+    do{
         // checkeo mensajes
         cout << ">";
         string cmd;
-        cin >> cmd;
-        if(true){
-            auto msg = "[MSG," + nick + "]" + cmd;
-            send(s, msg.c_str(), sizeof(msg.c_str()), 0);
-            cout << "mande -> " << msg;
+        getline(cin, cmd);
+        if(cmd != ""){
+            auto msg = "[MSG]" + nick + "," + cmd;
+            // printf("envio -> %s\n", msg.c_str());
+            enviar_a_socket(s, msg);
         }
-    }
+    }while(!feof(stdin));
+    printf("Cierro la conexión con server.\n");
 
     /* Cerrar el socket. */
     close(s);
-
 }

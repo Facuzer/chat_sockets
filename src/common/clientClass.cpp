@@ -47,12 +47,17 @@ void Client::spread(string msg){
     {
         Client c = clients->at(i);
         if(c.nickname != nickname){
-            // TODO sacar el [MSG]
             c.inform(msg);
         }
     }
 }
 
 void Client::inform(string msg){
+    printf("envio a %s -> %s\n", nickname.c_str(), msg.c_str());
     enviar_a_socket(s, msg);
+}
+
+
+void Client::close_conn() {
+    close(s);
 }

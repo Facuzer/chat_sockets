@@ -17,7 +17,7 @@ string leer_de_socket(int s) {
 }
 
 void enviar_a_socket(int s, string mensaje) {
-    if (send(s, mensaje.c_str(), sizeof(mensaje), 0) == -1){
+    if (send(s, mensaje.c_str(), MENSAJE_MAXIMO, 0) == -1){
         perror("Mandando el mensaje ");
         exit(1);
     };
@@ -35,11 +35,34 @@ bool includes(vector<string> vector, string element){
     return false;
 }
 
-/* Dado un string y un delimitador como " ", devuelve un vector de strings donde los elementos son los tokens que
-   resultan de la separación segun el delimitador. */
+vector<string> split(const string str, const string delim){
+    auto ret = vector<string>();
+    string actualStr = str;
+    int pos = 0;
+    string part = "";
+    while((pos = actualStr.find(delim)) != string::npos){
+        part = actualStr.substr(0, pos);
+        if(part != "")
+            ret.push_back(part);
+        actualStr.erase(0, pos + delim.length());
+    }
+    if(actualStr != ""){
+        ret.push_back(actualStr);
+    }
+    return ret;
+};
 
-// vector<string> split(const string& str, const string& delim)
-// {
-//      /* COMPLETAR */
-// }
+Msg Msg::parse(string rawMsg){
+    if(isMsg(rawMsg)){
+        auto content = rawMsg.substr(5, rawMsg.size() - 5);
+        vector<string> params = split(content, ",");
+        struct Msg ret;
+        ret.sender = params[0];
+        ret.msg = params[1];
+        return ret;
+    }
+    else{
+        return {};
+    }
+}
 
