@@ -78,7 +78,12 @@ int main(){
         string cmd;
         getline(cin, cmd);
         if(cmd != ""){
-            auto msg = "[MSG]" + nick + "," + cmd;
+            auto changedNick = nick;
+            auto changedMsg = cmd;
+            // change the commas for asc
+            findAndReplaceAll(changedNick, ",", "&asc44;");
+            findAndReplaceAll(changedMsg, ",", "&asc44;");
+            auto msg = "[MSG]" + changedNick + "," + changedMsg;
             // printf("envio -> %s\n", msg.c_str());
             enviar_a_socket(s, msg);
         }

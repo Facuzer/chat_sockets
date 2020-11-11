@@ -24,7 +24,7 @@ using namespace std;
 #define MENSAJE_MAXIMO  4096
 #define MAX_CLIENTS 10
 #define BUF_SIZE 4096
-#define PORT 3025
+#define PORT 3026
 
 vector<string> split(const string str, const string delim);
 
@@ -33,7 +33,7 @@ string leer_de_socket(int s);
 void enviar_a_socket(int s, string mensaje);
 string enviar_y_esperar_respuesta(int s, string mensaje);
 bool includes(vector<string> vector, string element);
-
+void findAndReplaceAll(string &data, string toSearch, string replaceStr);
 // Tipos de mensajes
 struct Msg{
     Msg parse(string rawMsg);
