@@ -10,7 +10,6 @@ void connection_handler(int socket_desc){
     
     /* Main loop */
     while(1) {
-
         /* leer socket, salir si hubo error*/
         auto msg = leer_de_socket(s);
         if(client.isAlive()){
@@ -19,6 +18,11 @@ void connection_handler(int socket_desc){
             if(msg == "[BYE]"){
                 client.bye();
                 break;
+            }
+            if(msg == "[LIST]"){
+                string content = join(convert_clients_to_nicks(&clients), ",");
+                encode_s(content);
+                enviar_a_socket(s, "[LIST]" + content);
             }
             /* Detectar el tipo de mensaje (crudo(solo texto) o comando interno(/..),
             y ejecutar la funcion correspondiente segun el caso */
@@ -63,24 +67,6 @@ int main(int argc, char* argv[])
         printf("Usage: ./tp <PORT>\n");
         exit(1);
     }
-    // while(1){
-    //     string a;
-    //     printf("Ingresa str: ");
-    //     getline(cin, a);
-    //     auto v = split(a, " ");
-    //     printf("lista -> [");
-    //     for (size_t i = 0; i < v.size(); i++)
-    //     {
-    //         printf("%s", v[i].c_str());
-    //         if(i != v.size() - 1){
-    //             printf(",");
-    //         }
-    //     }
-    //     printf("]\n");
-        
-    // }
-
-
     struct sockaddr_in client;
 
     // Abrimos un socket para escuchar conexiones entrantes

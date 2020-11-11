@@ -25,6 +25,10 @@ using namespace std;
 #define MAX_CLIENTS 10
 #define BUF_SIZE 4096
 
+
+void encode_s(string &data);
+void decode_s(string &encoded_data);
+
 vector<string> split(const string str, const string delim);
 string join(vector<string> v, const string delim);
 
@@ -69,4 +73,5 @@ class Client
         void bye();
         void close_conn();
 };
+vector<string> convert_clients_to_nicks(vector<Client> *v);
 

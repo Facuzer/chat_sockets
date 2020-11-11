@@ -3,6 +3,7 @@
 using namespace std;
 
 bool alive = true;
+string nick = "";
 // Funcion para establecer la conexion del cliente con el servidor.
 // Devuelve el socket descriptor de la conexion
 
@@ -59,7 +60,26 @@ void lookForMsgs(int s){
         if(rcv == "[BYE]"){
             break;
         }
-        if(rcv.substr(0, 5) == "[MSG]"){
+        else if(rcv.substr(0, 5) == "[BYE]"){
+            auto content = rcv.substr(5, rcv.size() - 5);
+            decode_s(content);
+            printf("[INFO] %s se fue del chat (seguro no le gusta c++, es inteligente ;) )\n", content.c_str());
+        }
+        else if(rcv.substr(0, 6) == "[LIST]"){
+            auto content = rcv.substr(6, rcv.size() - 6);
+            decode_s(content);
+            auto lista = split(content, ",");
+            printf("[INFO] Usuarios: \n");
+            int i = 0;
+            for (auto &&u : lista)
+            {
+                string itsYou = u == nick ? "(YOU)" : "";
+                printf("%d - %s %s\n", i, u.c_str(), itsYou.c_str());
+                i++;
+            }
+            printf("--------\n");
+        }
+        else if(rcv.substr(0, 5) == "[MSG]"){
             struct Msg msg;
             msg = msg.parse(rcv);
             printf(" [%s] -> %s\n", msg.sender.c_str(), msg.msg.c_str());
@@ -76,7 +96,7 @@ int main(int argc, char* argv[]){
     /* Conectarse al server (usando INET) */
     int s = connection_setup(atoi(argv[1]));
     // Pido nick
-    auto nick = pedir_nick(s);
+    nick = pedir_nick(s);
     // escucho mensajes
     thread msgThread = thread(lookForMsgs, s);
     /* Loop principal que envía mensajes al servidor */
@@ -93,18 +113,17 @@ int main(int argc, char* argv[]){
                     break;
                 }
                 if(cmd == "/list"){
-                    
+                    enviar_a_socket(s, "[LIST]");
                 }
             }
-
-            auto changedNick = nick;
-            auto changedMsg = cmd;
-            // change the commas for asc
-            findAndReplaceAll(changedNick, ",", "&asc44;");
-            findAndReplaceAll(changedMsg, ",", "&asc44;");
-            auto msg = "[MSG]" + changedNick + "," + changedMsg;
-            // printf("envio -> %s\n", msg.c_str());
-            enviar_a_socket(s, msg);
+            else{
+                string changedNick = nick, changedMsg = cmd;
+                encode_s(changedNick);
+                encode_s(changedMsg);
+                auto msg = "[MSG]" + changedNick + "," + changedMsg;
+                // printf("envio -> %s\n", msg.c_str());
+                enviar_a_socket(s, msg);
+            }
         }
     }while(!feof(stdin) && alive);
 

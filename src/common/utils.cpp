@@ -28,6 +28,32 @@ string enviar_y_esperar_respuesta(int s, string mensaje) {
     return leer_de_socket(s);
 }
 
+/**
+ *  Convierte el string normal, en un string que no afecte a la forma de enviar el mensaje
+ * por ejemplo, saca las comas que molestan para enviar parametros y las convierte en 
+ * un similar, pero codeado. 
+*/ 
+void encode_s(string &data){
+    findAndReplaceAll(data, ",", "&asc44;");
+}
+
+/**
+ *  Inverso de encode_s
+*/ 
+void decode_s(string &encoded_data){
+    findAndReplaceAll(encoded_data, "&asc44;", ",");
+}
+
+vector<string> convert_clients_to_nicks(vector<Client> *v){
+    vector<string> ret;
+    for (size_t i = 0; i < v->size(); i++)
+    {
+        Client c = v->at(i);
+        ret.push_back(c.getNickname());
+    }
+    return ret;
+}
+
 bool includes(vector<string> vector, string element){
     for(auto e: vector) {
         if(e == element) return true;
