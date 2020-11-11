@@ -6,7 +6,7 @@ bool alive = true;
 // Funcion para establecer la conexion del cliente con el servidor.
 // Devuelve el socket descriptor de la conexion
 
-int connection_setup(){
+int connection_setup(int PORT){
 
     int socket_fd;
     struct sockaddr_in remote;
@@ -68,9 +68,13 @@ void lookForMsgs(int s){
     }
 }
 
-int main(){
+int main(int argc, char* argv[]){
+    if(argc != 2){
+        printf("Usage: ./tp <PORT>\n");
+        exit(1);
+    }
     /* Conectarse al server (usando INET) */
-    int s = connection_setup();
+    int s = connection_setup(atoi(argv[1]));
     // Pido nick
     auto nick = pedir_nick(s);
     // escucho mensajes

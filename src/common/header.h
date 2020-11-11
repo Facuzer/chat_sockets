@@ -24,7 +24,6 @@ using namespace std;
 #define MENSAJE_MAXIMO  4096
 #define MAX_CLIENTS 10
 #define BUF_SIZE 4096
-#define PORT 3030
 
 vector<string> split(const string str, const string delim);
 string join(vector<string> v, const string delim);

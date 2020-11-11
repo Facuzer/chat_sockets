@@ -30,8 +30,7 @@ void connection_handler(int socket_desc){
 }
 
 
-int connection_setup(){
-
+int connection_setup(int PORT){
 	int listening_socket;
     struct sockaddr_in local, remote;
     /* Crear un socket de dominio INET con TCP (SOCK_STREAM).  */
@@ -58,8 +57,12 @@ int connection_setup(){
     return listening_socket;
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    if(argc != 2){
+        printf("Usage: ./tp <PORT>\n");
+        exit(1);
+    }
     // while(1){
     //     string a;
     //     printf("Ingresa str: ");
@@ -81,7 +84,7 @@ int main(void)
     struct sockaddr_in client;
 
     // Abrimos un socket para escuchar conexiones entrantes
-    int s = connection_setup();
+    int s = connection_setup(atoi(argv[1]));
     int i = 0;
     while(i < MAX_CLIENTS){  
         // Main loop del servidor
