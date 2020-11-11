@@ -24,9 +24,10 @@ using namespace std;
 #define MENSAJE_MAXIMO  4096
 #define MAX_CLIENTS 10
 #define BUF_SIZE 4096
-#define PORT 3026
+#define PORT 3030
 
 vector<string> split(const string str, const string delim);
+string join(vector<string> v, const string delim);
 
 using namespace std;
 string leer_de_socket(int s);
@@ -50,19 +51,23 @@ class Client
 {
     private:
         int s;
+        bool alive = true;
         string nickname;
         vector<Client>* clients;
     public:
-        string getNickname(){
-            return nickname;
-        }
+        Client(int _s, vector<Client>* clients);
+        string getNickname(){ return nickname; }
+        bool isAlive() { return alive; }
+
         string askNickname();
         void rechazarNickname();
         void aceptarNickname();
         bool checkNickname();
-        Client(int _s, vector<Client>* clients);
+
         void spread(string msg);
         void inform(string msg);
+
+        void bye();
         void close_conn();
 };
 

@@ -52,6 +52,18 @@ vector<string> split(const string str, const string delim){
     return ret;
 };
 
+string join(vector<string> v, const string delim){
+    string ret = "";
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        ret += v[i];
+        if(i != v.size() - 1){
+            ret += delim;
+        }
+    }
+    return ret;
+}
+
 Msg Msg::parse(string rawMsg){
     if(isMsg(rawMsg)){
         auto content = rawMsg.substr(5, rawMsg.size() - 5);
@@ -71,7 +83,6 @@ Msg Msg::parse(string rawMsg){
         return {};
     }
 }
-
 
 void findAndReplaceAll(string &data, string toSearch, string replaceStr)
 {

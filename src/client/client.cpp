@@ -2,6 +2,7 @@
 
 using namespace std;
 
+bool alive = true;
 // Funcion para establecer la conexion del cliente con el servidor.
 // Devuelve el socket descriptor de la conexion
 
@@ -52,9 +53,12 @@ string pedir_nick(int s){
 // Funcion principal de un cliente.
 // El siguiente esquema puede servir como guia. Aprovechen las funciones de string!
 void lookForMsgs(int s){
-    while(1){
+    while(alive){
         auto rcv = leer_de_socket(s);
         // printf("recibo -> %s\n", rcv.c_str());
+        if(rcv == "[BYE]"){
+            break;
+        }
         if(rcv.substr(0, 5) == "[MSG]"){
             struct Msg msg;
             msg = msg.parse(rcv);
@@ -78,6 +82,17 @@ int main(){
         string cmd;
         getline(cin, cmd);
         if(cmd != ""){
+            if(cmd.substr(0, 1) == "/"){
+                if(cmd == "/leave"){
+                    enviar_a_socket(s, "[BYE]");
+                    alive = false;
+                    break;
+                }
+                if(cmd == "/list"){
+                    
+                }
+            }
+
             auto changedNick = nick;
             auto changedMsg = cmd;
             // change the commas for asc
@@ -87,9 +102,12 @@ int main(){
             // printf("envio -> %s\n", msg.c_str());
             enviar_a_socket(s, msg);
         }
-    }while(!feof(stdin));
+    }while(!feof(stdin) && alive);
+
+    msgThread.join();
     printf("Cierro la conexión con server.\n");
 
     /* Cerrar el socket. */
     close(s);
+    return 0;
 }

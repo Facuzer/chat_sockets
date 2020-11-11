@@ -13,10 +13,13 @@ void connection_handler(int socket_desc){
 
         /* leer socket, salir si hubo error*/
         auto msg = leer_de_socket(s);
-        if(true){
+        if(client.isAlive()){
             cout << "recibo -> " << msg << endl;
             /* Parsear el buffer recibido*/
-
+            if(msg == "[BYE]"){
+                client.bye();
+                break;
+            }
             /* Detectar el tipo de mensaje (crudo(solo texto) o comando interno(/..),
             y ejecutar la funcion correspondiente segun el caso */
             if(msg.substr(0, 5) == "[MSG]"){

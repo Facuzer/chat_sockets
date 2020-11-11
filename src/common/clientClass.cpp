@@ -1,6 +1,17 @@
 #include "header.h"
 
 
+vector<string> convert_clients_to_nicks(vector<Client> *v){
+    vector<string> ret;
+    for (size_t i = 0; i < v->size(); i++)
+    {
+        Client c = v->at(i);
+        ret.push_back(c.getNickname());
+    }
+    return ret;
+}
+
+
 string Client::askNickname() {
     string str = enviar_y_esperar_respuesta(s, "[LOGIN]");
     return str;
@@ -57,6 +68,20 @@ void Client::inform(string msg){
     enviar_a_socket(s, msg);
 }
 
+
+void Client::bye() {
+    alive = false;
+    enviar_a_socket(s, "[BYE]");
+    close_conn();
+    for (size_t i = 0; i < clients->size(); i++)
+    {
+        Client c = clients->at(i);
+        if(c.getNickname() == nickname){
+            clients->erase(clients->begin() + i);
+        }
+    }
+    printf("Bye %s! Actual list: [%s]\n", nickname.c_str(), join(convert_clients_to_nicks(clients), ", ").c_str());
+}
 
 void Client::close_conn() {
     close(s);
