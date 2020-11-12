@@ -70,6 +70,7 @@ class Client
         string askNickname();
         void rechazarNickname();
         void aceptarNickname();
+        void nuevoUsuario();
         bool checkNickname();
 
         void spread(string msg);

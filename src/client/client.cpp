@@ -87,6 +87,10 @@ void lookForMsgs(int s){
             }
             printf("--------\n");
         }
+        else if(rcv.substr(0, 5) == "[NEW]"){
+            auto content = rcv.substr(5, rcv.size());
+            printf("[NEW] %s se ha unido al chat, seguro le gusta c++, alto dolobu \n", content.c_str()); 
+        }
         else if(rcv.substr(0, 5) == "[MSG]"){
             struct Msg msg;
             msg = msg.parse(rcv);
@@ -152,6 +156,10 @@ int main(int argc, char* argv[]){
                         for (auto &&p : params) encode_s(p);
                         enviar_a_socket(s, "[PRIV]" + params[0] + "," + params[1]);
                     }
+                }
+                else if(cmd.substr(0,3) == "/r " && lastUserPriv != ""){
+                    auto content = cmd.substr(2, cmd.size() - 2);
+                    enviar_a_socket(s, "[PRIV]" + lastUserPriv + "," + content);
                 }
             }
             else{

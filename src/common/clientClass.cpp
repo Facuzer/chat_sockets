@@ -13,6 +13,10 @@ void Client::aceptarNickname(){
     enviar_a_socket(s, "[OK]");
 }
 
+void Client::nuevoUsuario(){
+    spread("[NEW]" + nickname);
+}
+
 Client::Client(int _s, vector<Client>* _clients){
     s = _s;
     clients = _clients;
@@ -26,7 +30,7 @@ Client::Client(int _s, vector<Client>* _clients){
     aceptarNickname();
     clients->push_back((Client)(*this));
     
-    
+    nuevoUsuario();
     printf("Conexion aceptada de: %s\n", nickname.c_str());
 }
 
