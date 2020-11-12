@@ -60,6 +60,11 @@ class Client
     public:
         Client(int _s, vector<Client>* clients);
         string getNickname(){ return nickname; }
+        string getNickname(bool encode){ 
+            string n_coded = nickname;
+            encode_s(n_coded);
+            return !encode ? nickname : n_coded; 
+        }
         bool isAlive() { return alive; }
 
         string askNickname();

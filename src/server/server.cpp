@@ -19,6 +19,20 @@ void connection_handler(int socket_desc){
                 client.bye();
                 break;
             }
+            else if(msg.substr(0, 6) == "[PRIV]"){
+                auto content = msg.substr(6, msg.size() - 6);
+                auto params = split(content, ",");
+                for (auto &&p : params) decode_s(p);
+                auto user = params[0];
+                for (size_t i = 0; i < clients.size(); i++)
+                {
+                    Client c = clients.at(i);
+                    if(c.getNickname() == user){
+                        c.inform("[PRIV]" + client.getNickname(true) + "," + params[1]);
+                        break;
+                    }
+                }
+            }
             if(msg == "[LIST]"){
                 string content = join(convert_clients_to_nicks(&clients), ",");
                 encode_s(content);

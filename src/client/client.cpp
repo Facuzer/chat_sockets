@@ -2,6 +2,7 @@
 
 using namespace std;
 
+string lastUserPriv = "";
 bool alive = true;
 string nick = "";
 // Funcion para establecer la conexion del cliente con el servidor.
@@ -60,6 +61,13 @@ void lookForMsgs(int s){
         if(rcv == "[BYE]"){
             break;
         }
+        if(rcv.substr(0, 6) == "[PRIV]"){
+            auto content = rcv.substr(6, rcv.size() - 6);
+            decode_s(content);
+            auto params = split(content, ",");
+            lastUserPriv = params[0];
+            printf("(PRIV) -> [%s]: %s\n", params[0].c_str(), params[1].c_str());
+        }
         else if(rcv.substr(0, 5) == "[BYE]"){
             auto content = rcv.substr(5, rcv.size() - 5);
             decode_s(content);
@@ -112,8 +120,38 @@ int main(int argc, char* argv[]){
                     alive = false;
                     break;
                 }
-                if(cmd == "/list"){
+                else if(cmd == "/list"){
                     enviar_a_socket(s, "[LIST]");
+                }
+                else if(cmd.substr(0, 6) == "/priv "){
+                    auto content = cmd.substr(6, cmd.size() - 6);
+                    auto params = vector<string>();
+                    bool nick = true;
+                    params.push_back("");
+                    for (char c : content)
+                    {
+                        char space = (char)32;
+                        if(nick){
+                            if(c == space){
+                                nick = false;
+                                params.push_back("");
+                                continue;
+                            }
+                            else{
+                                params[0] += c;
+                            }
+                        }
+                        else{
+                            params[1] += c;
+                        }
+                    }
+                    if(params.size() != 2){
+                        printf("usage: /priv <user> <msg>");
+                    }
+                    else{
+                        for (auto &&p : params) encode_s(p);
+                        enviar_a_socket(s, "[PRIV]" + params[0] + "," + params[1]);
+                    }
                 }
             }
             else{
