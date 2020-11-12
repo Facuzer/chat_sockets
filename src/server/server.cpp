@@ -112,7 +112,10 @@ int main(int argc, char* argv[])
     
     
     
-  
+    // TODOS
+    // TODO /help
+    // TODO /r
+    // TODO notificaciones de entrada y salida personalizadas
 
     return 0;
 }
